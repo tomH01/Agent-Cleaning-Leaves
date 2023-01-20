@@ -38,6 +38,7 @@ class Grid:
                 self.leaves.append(rand_pos)
         return k
 
+    """Moves leaves UP with probability p_wind"""
     def move_leaves(self):
         for lv in self.leaves:
             if rand.random() < self.p_wind:
@@ -48,6 +49,11 @@ class Grid:
 
     def is_goal(self, position):
         return position[0] == self.goal[0] and position[1] == self.goal[1]
+
+    def reset(self):
+        self.moves = 0
+        self.updatePos((1, 1))
+        return self.agentState()
 
     def step(self, action):
         x_pos = self.agent_position[0] + self.actions[action][0]
@@ -75,3 +81,14 @@ class Grid:
 
         new_state = self.agentState()
         return new_state, reward, self.is_goal(self.agent_position), {}
+
+    def agent_state(self):
+        y_pos = self.agent_position[0]
+        x_pos = self.agent_position[1]
+        state = []
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                if not i == j:
+
+
+
