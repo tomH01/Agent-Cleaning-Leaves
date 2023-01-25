@@ -5,8 +5,8 @@ import numpy as np
 
 class Grid:
     def __init__(self, dimension, p_leaves, rand_w=3, p_wind=0.5, reward_conf=(-1, 5, -1, 5), max_moves=350):
-        self.dimension = dimension
         self.max_moves = max_moves
+        self.dimension = dimension
         self.p_leaves = p_leaves
         self.rand_w = rand_w
         self.p_wind = p_wind
@@ -16,6 +16,7 @@ class Grid:
         self.collected_leaves = 0
 
         self.grid = copy.deepcopy(self.init_grid())
+        self.state_space = [i for i in range(255)]
 
         self.actions = {'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1), 'S': (0, 0)}
         self.possible_actions = self.possible_actions
@@ -50,14 +51,17 @@ class Grid:
     def is_goal(self, position):
         return position[0] == self.goal[0] and position[1] == self.goal[1]
 
-    def updatePos(self, newPosition):
-        self.agentPosition = newPosition
+    def update_pos(self, new_position):
+        self.agent_position = new_position
 
     def reset(self):
         self.moves = 0
         self.w = self.rand_w
-        self.updatePos((0, 0))
-        return self.agentState()
+        self.update_pos((0, 0))
+        return self.agent_state()
+
+    def action_space_sample(self):
+        return np.random.choice(self.possible_actions)
 
     def step(self, action):
         x_pos = self.agent_position[0] + self.actions[action][0]
@@ -88,7 +92,7 @@ class Grid:
 
     def possible_actions(self):
         actions = ['S']
-        neighborhood = self.agent_state()
+        neighborhood = self.neighborhood()
         for i in range(8):
             if neighborhood[i] != 5:
                 match i:
@@ -102,20 +106,28 @@ class Grid:
                         actions.append('D')
         return actions
 
-    def agent_state(self):
+    def neighborhood(self):
         print(self.grid)
         y_pos = self.agent_position[0]
         x_pos = self.agent_position[1]
-        state = []
+        neighborhood = []
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if not (i, j) == (0, 0):
                     y_state = y_pos + i
                     x_state = x_pos + j
                     if 0 <= y_state < self.dimension[0] and 0 <= x_state < self.dimension[1]:
-                        state.append(self.grid[y_state][x_state])
+                        neighborhood.append(self.grid[y_state][x_state])
                     else:
-                        state.append(5)
-        return state
+                        neighborhood.append(5)
+        return neighborhood
 
-
+    def agent_state(self):
+        nbh = self.neighborhood()
+        int_state = 0
+        key = 0
+        for cell in nbh:
+            if cell == 1:
+                int_state += pow(2, key)
+            key += 1
+        return int_state
