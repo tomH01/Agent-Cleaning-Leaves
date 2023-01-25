@@ -8,7 +8,6 @@ class Grid:
         self.dimension = dimension
         self.max_moves = max_moves
         self.p_leaves = p_leaves
-        self.dim = dimension
         self.rand_w = rand_w
         self.p_wind = p_wind
         self.w = rand_w
@@ -19,13 +18,14 @@ class Grid:
         self.grid = copy.deepcopy(self.init_grid())
 
         self.actions = {'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1), 'S': (0, 0)}
-        self.possible_actions = ['U', 'D', 'L', 'R', 'S']
+        self.possible_actions = self.possible_actions
 
-        self.agent_position = (1, 1)
+        self.agent_position = (0, 0)
         self.goal = (self.dimension[0]-1, self.dimension[1]-1)
 
         self.moves = 0
-
+    """Initializes the grid with a percentage of randomly placed leaves. 
+    Air is represented with '0' and leaves with '1' """
     def init_grid(self):
         m = self.dimension[0]
         n = self.dimension[1]
@@ -50,9 +50,13 @@ class Grid:
     def is_goal(self, position):
         return position[0] == self.goal[0] and position[1] == self.goal[1]
 
+    def updatePos(self, newPosition):
+        self.agentPosition = newPosition
+
     def reset(self):
         self.moves = 0
-        self.updatePos((1, 1))
+        self.w = self.rand_w
+        self.updatePos((0, 0))
         return self.agentState()
 
     def step(self, action):
@@ -63,7 +67,8 @@ class Grid:
         self.w -= 1
 
         if self.moves == self.max_moves:
-            pass
+            reward = -100
+            return self.agent_state(), reward, True, {}
 
         if self.is_goal(self.agent_position):
             reward = self.reward_conf[3] * self.collected_leaves
@@ -79,16 +84,38 @@ class Grid:
             self.w = self.rand_w
             self.move_leaves()
 
-        new_state = self.agentState()
-        return new_state, reward, self.is_goal(self.agent_position), {}
+        return self.agent_state(), reward, self.is_goal(self.agent_position), {}
+
+    def possible_actions(self):
+        actions = ['S']
+        neighborhood = self.agent_state()
+        for i in range(8):
+            if neighborhood[i] != 5:
+                match i:
+                    case 1:
+                        actions.append('U')
+                    case 3:
+                        actions.append('L')
+                    case 4:
+                        actions.append('R')
+                    case 6:
+                        actions.append('D')
+        return actions
 
     def agent_state(self):
+        print(self.grid)
         y_pos = self.agent_position[0]
         x_pos = self.agent_position[1]
         state = []
         for i in range(-1, 2):
             for j in range(-1, 2):
-                if not i == j:
-
+                if not (i, j) == (0, 0):
+                    y_state = y_pos + i
+                    x_state = x_pos + j
+                    if 0 <= y_state < self.dimension[0] and 0 <= x_state < self.dimension[1]:
+                        state.append(self.grid[y_state][x_state])
+                    else:
+                        state.append(5)
+        return state
 
 
