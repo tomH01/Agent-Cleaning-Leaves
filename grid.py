@@ -16,7 +16,7 @@ class Grid:
         self.collected_leaves = 0
 
         self.grid = copy.deepcopy(self.init_grid())
-        self.state_space = [i for i in range(255)]
+        self.state_space = [i for i in range(511)]
 
         self.actions = {'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1), 'S': (0, 0)}
         self.possible_actions = self.possible_actions
