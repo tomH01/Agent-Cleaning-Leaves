@@ -25,6 +25,7 @@ class Grid:
         self.goal = (self.dimension[0]-1, self.dimension[1]-1)
 
         self.moves = 0
+
     """Initializes the grid with a percentage of randomly placed leaves. 
     Air is represented with '0' and leaves with '1' """
     def init_grid(self):
@@ -93,16 +94,16 @@ class Grid:
     def possible_actions(self):
         actions = ['S']
         neighborhood = self.neighborhood()
-        for i in range(8):
+        for i in range(9):
             if neighborhood[i] != 5:
                 match i:
                     case 1:
                         actions.append('U')
                     case 3:
                         actions.append('L')
-                    case 4:
+                    case 5:
                         actions.append('R')
-                    case 6:
+                    case 7:
                         actions.append('D')
         return actions
 
@@ -113,13 +114,13 @@ class Grid:
         neighborhood = []
         for i in range(-1, 2):
             for j in range(-1, 2):
-                if not (i, j) == (0, 0):
-                    y_state = y_pos + i
-                    x_state = x_pos + j
-                    if 0 <= y_state < self.dimension[0] and 0 <= x_state < self.dimension[1]:
-                        neighborhood.append(self.grid[y_state][x_state])
-                    else:
-                        neighborhood.append(5)
+                y_state = y_pos + i
+                x_state = x_pos + j
+                if 0 <= y_state < self.dimension[0] and 0 <= x_state < self.dimension[1]:
+                    neighborhood.append(self.grid[y_state][x_state])
+                else:
+                    neighborhood.append(5)
+
         return neighborhood
 
     def agent_state(self):
