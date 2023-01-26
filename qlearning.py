@@ -2,7 +2,7 @@ import numpy as np
 
 
 class QLearning:
-    def __init(self, env, seed=2022):
+    def __init__(self, env, seed=2022):
         np.random.seed(seed)
         self.env = env
 
