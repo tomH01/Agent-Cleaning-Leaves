@@ -16,14 +16,12 @@ class Grid:
         self.collected_leaves = 0
 
         self.grid = copy.deepcopy(self.init_grid())
-        self.state_space = [i for i in range(511)]
+        self.state_space = [i for i in range(512)]
 
         self.actions = {'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1), 'S': (0, 0)}
-        self.possible_actions = self.possible_actions
-
+        self.available_actions = ['U', 'D', 'L', 'R', 'S']
         self.agent_position = (0, 0)
         self.goal = (self.dimension[0]-1, self.dimension[1]-1)
-
         self.moves = 0
 
     """Initializes the grid with a percentage of randomly placed leaves. 
@@ -62,17 +60,17 @@ class Grid:
         return self.agent_state()
 
     def action_space_sample(self):
-        return np.random.choice(self.possible_actions)
+        return np.random.choice(self.possible_actions())
 
     def step(self, action):
-        x_pos = self.agent_position[0] + self.actions[action][0]
-        y_pos = self.agent_position[1] + self.actions[action][1]
-
+        y_pos = self.agent_position[0] + self.actions[action][0]
+        x_pos = self.agent_position[1] + self.actions[action][1]
+        self.update_pos((y_pos, x_pos))
         self.moves += 1
         self.w -= 1
+        reward = 0
 
         if self.moves == self.max_moves:
-            reward = -100
             return self.agent_state(), reward, True, {}
 
         if self.is_goal(self.agent_position):
@@ -108,7 +106,6 @@ class Grid:
         return actions
 
     def neighborhood(self):
-        print(self.grid)
         y_pos = self.agent_position[0]
         x_pos = self.agent_position[1]
         neighborhood = []
