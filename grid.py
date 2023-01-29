@@ -1,4 +1,5 @@
 import copy
+import math
 import random as rand
 import numpy as np
 
@@ -16,7 +17,8 @@ class Grid:
         self.collected_leaves = 0
 
         self.grid = copy.deepcopy(self.init_grid())
-        self.state_space = [i for i in range(512)]
+        self.state_space = [i for i in range(pow(2, 9 + int(math.log(dimension[0], 2))
+                                                 + int(math.log(dimension[1], 2)) + 2))]
 
         self.actions = {'U': (-1, 0), 'D': (1, 0), 'L': (0, -1), 'R': (0, 1), 'S': (0, 0)}
         self.available_actions = ['U', 'D', 'L', 'R', 'S']
@@ -120,11 +122,19 @@ class Grid:
 
         return neighborhood
 
+    def pos_to_bin(self):
+        n_bin = [int(x) for x in list('{0:0b}'.format(self.agent_position[0]))]
+        m_bin = [int(x) for x in list('{0:0b}'.format(self.agent_position[1]))]
+        n = [0] * (int(math.log(self.dimension[0], 2) + 1 - len(n_bin))) + n_bin
+        m = [0] * (int(math.log(self.dimension[1], 2) + 1 - len(m_bin))) + m_bin
+        return n + m
+
+
     def agent_state(self):
-        nbh = self.neighborhood()
+        state = self.neighborhood() + self.pos_to_bin()
         int_state = 0
         key = 0
-        for cell in nbh:
+        for cell in state:
             if cell == 1:
                 int_state += pow(2, key)
             key += 1
