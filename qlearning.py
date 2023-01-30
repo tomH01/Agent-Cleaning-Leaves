@@ -39,11 +39,6 @@ class QLearning:
                                          (reward + gamma * q[next_observation, next_action] - q[observation, action])
                 observation = next_observation
 
-            print(self.env.moves)
-            #if epsilon - 2 / epochs > 0:
-            #    epsilon -= 2 / epochs
-            #else:
-            #    epsilon = 0
             total_rewards[i] = epoch_reward
         if plot:
             plt.plot(total_rewards)
