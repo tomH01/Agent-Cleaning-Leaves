@@ -16,8 +16,13 @@ class QLearning:
         return actions[np.argmax(values)]
 
     """Key component of Q-Learning"""
-    def training(self, epochs=50000, alpha=0.1, gamma=1.0, epsilon=1.0, save=False, plot=True, print_interval=50):
-        q = {}
+    def training(self, epochs=50000, alpha=0.1, gamma=1.0, epsilon=1.0, save=False, load=False, plot=True,
+                 print_interval=50):
+
+        if load:
+            q = self.load_q("QMatrix")
+        else:
+            q = {}
         for state in self.env.state_space:
             for action in self.env.available_actions:
                 q[state, action] = 0
@@ -102,8 +107,3 @@ class QLearning:
             observation, reward, done, info = env_exe.step(action)
             total_reward += reward
             print("action: ", action," reward: ", reward, " total reward: ", total_reward)
-
-
-    def move(self):
-        self.env.reset()
-        pass
